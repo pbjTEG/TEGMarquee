@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Jasmine Test Page</title>
+	<link rel="stylesheet" href="../src/TEGMarquee.css" type="text/css" />
+	<!-- Jasmine testing -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.6.0/jasmine.css" />
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.6.0/jasmine.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.6.0/jasmine-html.min.js"></script>
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jasmine/3.6.0/boot.js"></script>
+	<script type="text/javascript" src="../src/TEGMarquee.js"></script>
+	<script type="text/javascript" src="jasmine.spec.js"></script>
+</head>
+<body>
+<h1>Jasmine Tests for TEGMarquee</h1>
+<ul id="marqueeLeft" class="marqueeContainer marqueeLeft">
+	<li id="leftFirst">First</li>
+	<li id="leftSecond">Second item is longer</li>
+	<li id="leftThird">Third</li>
+	<li id="leftFourth">Fourth item is also longer</li>
+	<li id="leftFifth">Fifth</li>
+</ul>
+<p><a id="pauseLeft" href="javascript:TEGMLeft.pause();">pause</a> <a id="playLeft" href="javascript:TEGMLeft.play();">play</a></p>
+<div style="display: flex;">
+	<div style="display: inline-block;">
+		<ul id="marqueeUp" class="marqueeContainer">
+			<li id="upFirst">First<br />
+				Item
+			</li>
+			<li id="upSecond">Second</li>
+			<li id="upThird">Third</li>
+			<li id="upFourth">Fourth<br />
+				item<br />
+				here
+			</li>
+			<li id="upFifth">Fifth</li>
+		</ul>
+	</div>
+	<div style="display: inline-block;">
+		<ul class="marqueeDown marqueeContainer">
+			<li id="downFirst">First</li>
+			<li id="downSecond">Second<br />
+				item
+			</li>
+			<li id="downThird">Scrolling down is not as legible.</li>
+			<li id="downFourth">Fourth</li>
+			<li id="downFifth">Fifth<br />
+				item<br />
+				is<br />
+				longer
+			</li>
+		</ul>
+	</div>
+</div>
+<ul class="marqueeRight marqueeContainer" style="transform : translateX(-200%);">
+	<li>First item is the longest item of them all, but not by much.</li>
+	<li>Scrolling right is not as legible.</li>
+	<li>Third</li>
+	<li>Fourth item is longer than most of these.</li>
+	<li>Fifth</li>
+</ul>
+<ul id="nocontents"></ul>
+</body>
+</html>

@@ -1,0 +1,505 @@
+<!--
+  ~ Copyright (c) 2020. The Production Management Group, Ltd.
+-->
+<!DOCTYPE html>
+<!--suppress JSUnresolvedLibraryURL -->
+<html lang="en">
+<head>
+	<title>TEG Marquee</title>
+	<meta charset="UTF-8" />
+	<meta name="keywords" content="javascript, library, quiz, trivia, form" />
+	<meta name="description" content="Creates additional HTML structure and adds functionality to fake pagination of a single page's content." />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<style>
+		body {
+			background: white;
+			margin: 0 auto;
+			max-width: 60rem;
+		}
+
+		td,
+		th {
+			padding: 4pt;
+			vertical-align: top;
+		}
+
+		pre {
+			font-size: smaller;
+			max-width: 800px;
+			overflow: auto;
+		}
+
+		td[colspan] > pre.prettyprint.lang-javascript.prettyprinted {
+			max-width: 100%;
+		}
+
+		td > pre.prettyprint.lang-javascript.prettyprinted {
+			max-width: 20rem;
+			padding: .5rem;
+		}
+
+		thead tr {
+			background: lightgray;
+		}
+
+		tr:nth-child(even) {
+			background: lightgray;
+		}
+
+		tr:nth-child(even) td[colspan] {
+			background: white;
+		}
+
+		dt {
+			margin-top: 10pt;
+		}
+
+		.emphasis,
+		.emphasis .pun {
+			background: gray;
+			color: yellow;
+		}
+
+		/* placeholder selectors for IDE convenience */
+		.prettyprint, .lang-javascript, .lang-html {
+			/* no actual styles, just used  to trigger autocomplete in my IDE */
+		}
+	</style>
+	<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
+	<!-- styles and script for examples -->
+	<link rel="stylesheet" href="../src/TEGMarquee.css" type="text/css" />
+	<style>
+		h2.example {
+			margin: 1rem 0 0;
+		}
+
+		.marqueeContainer {
+			border: 1px solid red;
+			list-style: none;
+			margin: 0;
+			padding: 0;
+		}
+
+		ul#marqueeUp,
+		ul.marqueeDown {
+			height: 7rem;
+			margin: 0 2rem 0 0;
+			width: 10rem;
+		}
+
+		ul#marqueeLeft,
+		ul.marqueeRight {
+			height: 1.8rem;
+			width: 20rem;
+		}
+
+		ul.marqueeContainer li {
+			border: 1px solid blue;
+			margin: 0;
+			padding: .2rem;
+		}
+	</style>
+	<script src="../src/TEGMarquee.js" type="application/javascript"></script>
+	<script>
+		// implementation for this page
+		document.addEventListener('DOMContentLoaded', (event) => {
+			window.TEGMUp = new TEGMarquee({
+				                               marqueeSelector : '#marqueeUp',
+				                               direction       : TEGMarquee.D_UP,
+			                               });
+			TEGMUp.doScroll();
+			window.TEGMDown = new TEGMarquee({
+				                                 marqueeSelector : 'ul.marqueeDown',
+				                                 direction       : TEGMarquee.D_DOWN,
+				                                 mousePause      : true,
+			                                 });
+			TEGMDown.doScroll();
+			window.TEGMLeft = new TEGMarquee({
+				                                 marqueeSelector : '#marqueeLeft',
+				                                 direction       : TEGMarquee.D_LEFT,
+				                                 duration        : 5,
+			                                 });
+			TEGMLeft.doScroll();
+			window.TEGMRight = new TEGMarquee({
+				                                  marqueeSelector : 'ul.marqueeRight',
+				                                  direction       : TEGMarquee.D_RIGHT,
+				                                  duration        : 8,
+			                                  });
+			TEGMRight.doScroll();
+		}); // end content loaded
+	</script>
+</head>
+<body>
+<h1>TEG Marquee</h1>
+<p>Make the content slide prettily across the screen with variable sizes of scrolling items, in any of four directions, pausing while the mouse is over the marquee, and all with vanilla JavaScript.</p>
+<h2 id="examples">Examples</h2>
+<h2 class="example">left</h2>
+<ul id="marqueeLeft" class="marqueeContainer marqueeLeft">
+	<li id="leftFirst">First</li>
+	<li id="leftSecond">Second item is longer</li>
+	<li id="leftThird">Third</li>
+	<li id="leftFourth">Fourth item is also longer</li>
+	<li id="leftFifth">Fifth</li>
+</ul>
+<p><a id="pauseLeft" href="javascript:TEGMLeft.pause();">pause</a> <a id="playLeft" href="javascript:TEGMLeft.play();">play</a></p>
+<div style="display: flex;">
+	<div style="display: inline-block;">
+		<h2 class="example">up</h2>
+		<ul id="marqueeUp" class="marqueeContainer">
+			<li id="upFirst">First<br />
+				Item
+			</li>
+			<li id="upSecond">Second</li>
+			<li id="upThird">Third</li>
+			<li id="upFourth">Fourth<br />
+				item<br />
+				here
+			</li>
+			<li id="upFifth">Fifth</li>
+		</ul>
+	</div>
+	<div style="display: inline-block;">
+		<h2 class="example">down</h2>
+		<ul class="marqueeDown marqueeContainer">
+			<li id="downFirst">First</li>
+			<li id="downSecond">Second<br />
+				item
+			</li>
+			<li id="downThird">Scrolling down is not as legible.</li>
+			<li id="downFourth">Fourth</li>
+			<li id="downFifth">Fifth<br />
+				item<br />
+				is<br />
+				longer
+			</li>
+		</ul>
+	</div>
+</div>
+<h2 class="example">right</h2>
+<ul class="marqueeRight marqueeContainer">
+	<li>First item is the longest item of them all, but not by much.</li>
+	<li>Scrolling right is not as legible.</li>
+	<li>Third</li>
+	<li>Fourth item is longer than most of these.</li>
+	<li>Fifth</li>
+</ul>
+<h2 id="requires">Requires</h2>
+<ul>
+	<li><a href="https://www.w3schools.com/Js/js_es6.asp">ECMAScript 6 compliant environment</a></li>
+	<li>an HTML structure with elements inside a container (see <a href="#examples">Examples</a> above)</li>
+</ul>
+<h2 id="provided">Provided</h2>
+<ul>
+	<li><a href="../src/TEGMarquee.css">TEGMarquee.css</a> - minimum style requirements to make the animation work</li>
+	<li><a href="../src/TEGMarquee.js">TEGMarquee.js</a> - does all the heavy lifting</li>
+</ul>
+<h2 id="installation">Installation</h2>
+<p>Link the JavaScript and CSS in the <code class="prettyprint lang-javascript">&lt;head&gt;</code> element of the page. Note that
+	<code class="prettyprint lang-javascript">TEGMarquee.css</code> is easily incorporated into your own CSS and not strictly necessary.
+</p>
+<pre class="prettyprint lang-html">
+  &lt;link rel="stylesheet" href="https://foo.bar.com/path/to/files/TEGMarquee.css" type="text/css" />
+  &lt;script src="https://foo.bar.com/path/to/files/TEGMarquee.js" type="text/javascript">&lt;/script>
+</pre>
+<p>Create a new <code class="prettyprint lang-javascript">TEGMarquee</code> object in a
+	<code class="prettyprint lang-javascript">&lt;script></code> element or external JavaScript file.
+</p>
+<pre class="prettyprint lang-javascript">
+window.TEGMUp = new TEGMarquee({
+    marqueeSelector : '#marqueeUp',
+    direction       : TEGMarquee.D_UP, // direction option defaults to "up" so this is not strictly necessary
+  });
+</pre>
+<p>Finally, call <code class="prettyprint lang-javascript">doScroll()</code> to start the scrolling.</p>
+<pre class="prettyprint lang-javascript">
+TEGMUp.doScroll();
+</pre>
+<h2 id="configuration">Options</h2>
+<p>A marquee is configured by a closure of option properties provided as a parameter for the constructor.</p>
+<table>
+	<thead>
+	<tr>
+		<th>
+			Option
+		</th>
+		<th>
+			Type
+		</th>
+		<th>
+			Default
+		</th>
+		<th>
+			Description
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td id="marqueeSelector"><code class="prettyprint lang-javascript">marqueeSelector</code></td>
+		<td>String</td>
+		<td><code class="prettyprint lang-javascript">'#marquee'</code></td>
+		<td>CSS selector to find the marquee container</td>
+	</tr>
+	<tr>
+		<td id="direction"><code class="prettyprint lang-javascript">direction</code></td>
+		<td>String</td>
+		<td><code class="prettyprint lang-javascript">TEGMarquee.D_UP</code></td>
+		<td>
+			<p>direction of scroll, must be one of<br />
+				<br />
+				TEGMarquee.D_UP<br />
+				TEGMarquee.D_RIGHT<br />
+				TEGMarquee.D_DOWN<br />
+				TEGMarquee.D_LEFT
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<td id="duration"><code class="prettyprint lang-javascript">duration</code></td>
+		<td>Number</td>
+		<td><code class="prettyprint lang-javascript">3</code></td>
+		<td>move the scrolling item the calculated distance in this many seconds, CSS transition-duration</td>
+	</tr>
+	<tr>
+		<td id="delay"><code class="prettyprint lang-javascript">delay</code></td>
+		<td>Number</td>
+		<td><code class="prettyprint lang-javascript">0</code></td>
+		<td>
+			<p>the number of milliseconds to wait before initially starting the scrolling animations</p>
+			<p>NOTE: this is <strong>not</strong> a css <code class="prettyprint lang-javascript">transition-delay</code> or
+				<code class="prettyprint lang-javascript">animation-delay</code> value (which is in seconds) but a
+				<code class="prettyprint lang-javascript">setTimeout()</code> count in milliseconds.
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<td id="timing"><code class="prettyprint lang-javascript">timing</code></td>
+		<td>String</td>
+		<td><code class="prettyprint lang-javascript">'linear'</code></td>
+		<td>
+			<p>the value for the transition-timing-function CSS property, must be one of<br />
+				<br />
+				<code class="prettyprint lang-javascript">'linear'</code> - specifies a transition effect with the same speed from start to end (recommended and default)<br />
+				<code class="prettyprint lang-javascript">'ease'</code> - specifies a transition effect with a slow start, then fast, then end slowly<br />
+				<code class="prettyprint lang-javascript">'ease-in'</code> - specifies a transition effect with a slow start<br />
+				<code class="prettyprint lang-javascript">'ease-out'</code> - specifies a transition effect with a slow end<br />
+				<code class="prettyprint lang-javascript">'ease-in-out'</code> - specifies a transition effect with a slow start and end<br />
+				<code class="prettyprint lang-javascript">'cubic-bezier(<em>n</em>, <em>n</em>, <em>n</em>,
+					<em>n</em>)'</code> - lets you define your own values in a cubic-bezier function
+			</p>
+		</td>
+	</tr>
+	<tr>
+		<td id="mousePause"><code class="prettyprint lang-javascript">mousePause</code></td>
+		<td>Boolean</td>
+		<td><code class="prettyprint lang-javascript">true</code></td>
+		<td>if true, hovering the mouse over the marquee will pause the scroll</p>
+		</td>
+	</tr>
+	</tbody>
+</table>
+<h2 id="constants">Constants</h2>
+<table>
+	<thead>
+	<tr>
+		<th>
+			Constant
+		</th>
+		<th>
+			Type
+		</th>
+		<th>
+			Value
+		</th>
+		<th>
+			Description
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td id="D_DOWN"><code class="prettyprint lang-javascript">D_DOWN</code></td>
+		<td>String</td>
+		<td><code class="prettyprint lang-javascript">'bottom'</code></td>
+		<td>configures the marquee to scroll downwards</td>
+	</tr>
+	<tr>
+		<td id="D_LEFT"><code class="prettyprint lang-javascript">D_LEFT</code></td>
+		<td>String</td>
+		<td><code class="prettyprint lang-javascript">'left'</code></td>
+		<td>configures the marquee to scroll to the left</td>
+	</tr>
+	<tr>
+		<td id="D_RIGHT"><code class="prettyprint lang-javascript">D_RIGHT</code></td>
+		<td>String</td>
+		<td><code class="prettyprint lang-javascript">'right'</code></td>
+		<td>configures the marquee to scroll to the right</td>
+	</tr>
+	<tr>
+		<td id="D_UP"><code class="prettyprint lang-javascript">D_UP</code></td>
+		<td>String</td>
+		<td><code class="prettyprint lang-javascript">'top'</code></td>
+		<td>configures the marquee to scroll upwards</td>
+	</tr>
+	<tr>
+		<td id="DIRECTIONS"><code class="prettyprint lang-javascript">DIRECTIONS</code></td>
+		<td>String[]</td>
+		<td><code class="prettyprint lang-javascript">[TEGMarquee.D_UP, TEGMarquee.D_RIGHT, TEGMarquee.D_DOWN, TEGMarquee.D_LEFT]</code></td>
+		<td>array of available directions, for convenience</td>
+	</tr>
+	</tbody>
+</table>
+<h2 id="properties">Properties</h2>
+<table>
+	<thead>
+	<tr>
+		<th>
+			Option
+		</th>
+		<th>
+			Type
+		</th>
+		<th>
+			Description
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td id="options"><code class="prettyprint lang-javascript">options</code></td>
+		<td>Closure</td>
+		<td>values to configure the marquee behavior, see <a href="#configuration">Options</a> above</td>
+	</tr>
+	<tr>
+		<td id="marqueeContainer"><code class="prettyprint lang-javascript">marqueeContainer</code></td>
+		<td>HTMLElement</td>
+		<td>the DOM node which contains the scrolling items</td>
+	</tr>
+	<tr>
+		<td id="marqueeContents"><code class="prettyprint lang-javascript">marqueeContents</code></td>
+		<td>TEGMElement[]</td>
+		<td>an array of the scrolling items, see <a href="#TEGMElement">TEGMElement</a> above</td>
+	</tr>
+	<tr>
+		<td id="propertyDirection"><code class="prettyprint lang-javascript">direction</code></td>
+		<td>one of <a href="#DIRECTIONS"><code class="prettyprint lang-javascript">TEGMarquee.DIRECTIONS</code></a></td>
+		<td>the direction of scroll</td>
+	</tr>
+	<tr>
+		<td id="propertyDuration"><code class="prettyprint lang-javascript">duration</code></td>
+		<td>Number</td>
+		<td>the number of seconds to traverse the calculated <a href="#scrollDistance">scroll distance</a></td>
+	</tr>
+	<tr>
+		<td id="propertydelay"><code class="prettyprint lang-javascript">delay</code></td>
+		<td>Number</td>
+		<td>
+			<p>the number of milliseconds to wait before initially starting the scrolling animations</p>
+			<p>NOTE: this is <strong>not</strong> a css <code class="prettyprint lang-javascript">transition-delay</code> or <code class="prettyprint lang-javascript">animation-delay</code> value (which is in seconds) but a <code class="prettyprint lang-javascript">setTimeout()</code> count in milliseconds.</p>
+		</td>
+	</tr>
+	<tr>
+		<td id="propertytiming"><code class="prettyprint lang-javascript">timing</code></td>
+		<td>String</td>
+		<td>
+			<p>the value for the transition-timing-function CSS property, must be one of<br />
+				<br />
+				<code class="prettyprint lang-javascript">'linear'</code> - specifies a transition effect with the same speed from start to end (recommended and default)<br />
+				<code class="prettyprint lang-javascript">'ease'</code> - specifies a transition effect with a slow start, then fast, then end slowly<br />
+				<code class="prettyprint lang-javascript">'ease-in'</code> - specifies a transition effect with a slow start<br />
+				<code class="prettyprint lang-javascript">'ease-out'</code> - specifies a transition effect with a slow end<br />
+				<code class="prettyprint lang-javascript">'ease-in-out'</code> - specifies a transition effect with a slow start and end<br />
+				<code class="prettyprint lang-javascript">'cubic-bezier(<em>n</em>, <em>n</em>, <em>n</em>,
+					<em>n</em>)'</code> - lets you define your own values in a cubic-bezier function
+		</td>
+	</tr>
+	<tr>
+		<td id="scrollDistance"><code class="prettyprint lang-javascript">scrollDistance</code></td>
+		<td>Number</td>
+		<td>
+			<p>the number of pixels each scrolling item will move in a single iteration of the animation</p>
+			<p>This value is the height of the tallest item for vertical scrolling or the width of the widest item for horizontal scrolling.</p>
+		</td>
+	</tr>
+	<tr>
+		<td id="lastItem"><code class="prettyprint lang-javascript">lastItem</code></td>
+		<td>TEGMElement</td>
+		<td>the last item in the list of scrolling elements as defined by <a href="#direction"><code class="prettyprint lang-javascript">direction</code></a>, see <a href="#TEGMElement">TEGMElement</a> above
+		</td>
+	</tr>
+	<tr>
+		<td id="isRunning"><code class="prettyprint lang-javascript">isRunning</code></td>
+		<td>Boolean</td>
+		<td><code class="prettyprint lang-javascript">true</code> if the marquee is scrolling</td>
+	</tr>
+	<tr>
+		<td id="isVertical"><code class="prettyprint lang-javascript">isVertical</code></td>
+		<td>Boolean</td>
+		<td><code class="prettyprint lang-javascript">true</code> if the marquee&rsquo;s <a href="#direction"><code class="prettyprint lang-javascript">direction</code></a> is <a href="#D_UP"><code class="prettyprint lang-javascript">TEGMarquee.D_UP</code></a> or <a href="#D_DOWN"><code class="prettyprint lang-javascript">TEGMarquee.D_DOWN</code></a> </td>
+	</tr>
+	</tbody>
+</table>
+<h2 id="methods">Methods</h2>
+<dl>
+	<dt id="doScroll"><code class="prettyprint lang-javascript">doScroll()</code></dt>
+	<dd>initiates the scrolling animation</dd>
+
+	<dt id="setStart"><code class="prettyprint lang-javascript">setStart(<em>marqueeItem: <a href="#TEGMElement"><code class="prettyprint lang-javascript">TEGMElement</code></a></em>)</code></dt>
+	<dd>sets the initial position of a scrolling item based upon the location of <a href="#lastItem"><code class="prettyprint lang-javascript">lastItem</code></a> and <a href="#direction"><code class="prettyprint lang-javascript">direction</code></a></dd>
+
+	<dt id="pause"><code class="prettyprint lang-javascript">pause()</code></dt>
+	<dd>stops the scrolling animation</dd>
+
+	<dt id="play"><code class="prettyprint lang-javascript">play()</code></dt>
+	<dd>stops the scrolling animation</dd>
+
+</dl>
+<h2 id="staticMethods">Static Methods</h2>
+<dl>
+	<dt id="scrollItem"><code class="prettyprint lang-javascript">scrollItem(<em>marqueeObject: TEGMarquee</em>, <em>marqueeItem:
+		<a href="#TEGMElement"><code class="prettyprint lang-javascript">TEGMElement</code></a></em>)</code></dt>
+	<dd>begins a single iteration of a scrolling animation for a single item</dd>
+
+</dl>
+<h2 id="classes">Scrolling Element Class</h2>
+<dl>
+	<dt id="TEGMElement">TEGMElement</dt>
+	<dd>
+		<p>Wraps the HTMLElement of each scrolling item in a few convenience properties.</p>
+		<h3 id="TEGMEConstructor">Constructor</h3>
+		<pre class="prettyprint lang-javascript">new TEGMElement(<em>newItem: HTMLElement</em>, <em>direction: String</em></pre>
+		<p>The parameter <code class="prettyprint lang-javascript">direction</code> must be one of <a href="#DIRECTIONS"><code class="prettyprint lang-javascript">TEGMarquee.DIRECTIONS</code></a> above.</p>
+		<h3 id="TEGMEProperties">Properties</h3>
+		<h4>Shortcuts To <code class="prettyprint lang-javascript">HTMLElement</code> Properties and Methods</h4>
+		<p><code class="prettyprint lang-javascript">TEGMElement</code> provides the following shortcuts to the underlying <code class="prettyprint lang-javascript">HTMLElement</code> object.</p>
+		<ul>
+			<li><code class="prettyprint lang-javascript">offsetHeight</code></li>
+			<li><code class="prettyprint lang-javascript">offsetWidth</code></li>
+			<li><code class="prettyprint lang-javascript">ontransitionend</code></li>
+			<li><code class="prettyprint lang-javascript">remove()</code></li>
+			<li><code class="prettyprint lang-javascript">style</code></li>
+		</ul>
+		<h4>Unique Properties</h4>
+		<dl>
+			<dt><code class="prettyprint lang-javascript">element</code><dt>
+			<dd>the underlying <code class="prettyprint lang-javascript">HTMLElement</code></dd>
+
+			<dt><code class="prettyprint lang-javascript">direction</code><dt>
+			<dd>the direction of scroll, one of <a href="#DIRECTIONS"><code class="prettyprint lang-javascript">TEGMarquee.DIRECTIONS</code></a> above</dd>
+
+			<dt><code class="prettyprint lang-javascript">id</code><dt>
+			<dd>a unique(ish) generated identifier string</dd>
+
+			<dt><code class="prettyprint lang-javascript">lastRatio</code><dt>
+			<dd>the value of <code class="prettyprint lang-javascript">IntersectionObserverEntry.intersectionRatio</code> from the previous run of the <code class="prettyprint lang-javascript">IntersectionObserver</code>, if any</dd>
+
+			<dt><code class="prettyprint lang-javascript">animationOffset</code><dt>
+			<dd>
+				<p>the distance in pixels from the scrolling element to the end of the marquee defined by the scrolling direction</p>
+				<p>For example, if the direction is <code class="prettyprint lang-javascript">TEGMarquee.D_RIGHT</code> then the <code class="prettyprint lang-javascript">animationOffset</code> is the distance in pixels from the right side of the scrolling element to the right side of the containing element.</p>
+			</dd>
+		</dl>
+	</dd>
+</dl>
+</body>
+</html>

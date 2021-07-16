@@ -1,0 +1,20 @@
+/* minimum style requirements for marquees */
+.marqueeContainer {
+	height: 10rem; /* make this fit your layout, must be > 0 */
+	overflow: hidden;
+	position: relative;
+	width: 10rem; /* make this fit your layout, must be > 0 */
+}
+
+.marqueeContainer > * {
+	display: inline-block;
+	padding: .3rem; /* not really required but some white space is recommended */
+	position: absolute;
+}
+
+/* if scrolling left or right, make the widths static */
+.marqueeContainer.marqueeLeft,
+.marqueeContainer.marqueeRight {
+	height: 1.8rem; /* expects to be single line of text */
+	white-space: nowrap;
+}
