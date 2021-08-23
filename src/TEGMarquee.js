@@ -459,7 +459,10 @@ class TEGMElement {
 		_TEGME._element = newItem;
 
 		if (!(newItem instanceof HTMLElement)) {
-			console.error('TEGMElement Error: No HTMLElement provided.');
+			console.error(`%cTEGMElement Error%c: %cNo HTMLElement provided.`,
+			              'font-weight: bold;, color: red;',
+			              'font-weight: normal; color: auto;',
+			              'color: yellow;');
 		}
 
 		// set an identifier separate from any id attribute set by the initial HTML
