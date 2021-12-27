@@ -66,35 +66,6 @@
 		}
 	</style>
 	<script src="https://cdn.jsdelivr.net/gh/google/code-prettify@master/loader/run_prettify.js"></script>
-
-	<script>
-		// implementation for this page
-		document.addEventListener('DOMContentLoaded', (event) => {
-			window.TEGMUp = new TEGMarquee({
-				                               marqueeSelector : '#marqueeUp',
-				                               direction       : TEGMarquee.D_UP,
-			                               });
-			TEGMUp.doScroll();
-			window.TEGMDown = new TEGMarquee({
-				                                 marqueeSelector : 'ul.marqueeDown',
-				                                 direction       : TEGMarquee.D_DOWN,
-				                                 mousePause      : true,
-			                                 });
-			TEGMDown.doScroll();
-			window.TEGMLeft = new TEGMarquee({
-				                                 marqueeSelector : '#marqueeLeft',
-				                                 direction       : TEGMarquee.D_LEFT,
-				                                 duration        : 5,
-			                                 });
-			TEGMLeft.doScroll();
-			window.TEGMRight = new TEGMarquee({
-				                                  marqueeSelector : 'ul.marqueeRight',
-				                                  direction       : TEGMarquee.D_RIGHT,
-				                                  duration        : 8,
-			                                  });
-			TEGMRight.doScroll();
-		}); // end content loaded
-	</script>
 </head>
 <body>
 <h1>TEG Marquee</h1>
