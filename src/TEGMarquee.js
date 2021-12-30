@@ -79,7 +79,7 @@ class TEGMarquee {
 				                                                  _TEGM._lastRatio = change.intersectionRatio;
 			                                                  }); // end loop through changes
 		                                                  },
-		                                                  {thresholds : [0, .1, 1]}); // end marqueeObserver
+		                                                  {thresholds : [0, 1]}); // end marqueeObserver
 
 		_TEGM._marqueeObserver.observe(_TEGM._marqueeContainer);
 
@@ -101,47 +101,65 @@ class TEGMarquee {
 		 * @type {IntersectionObserver}
 		 * @private
 		 */
-		_TEGM._scrollObserver = new IntersectionObserver(changes => {
-			                                                 // element states: new and never visible, entered, exiting, exited
-			                                                 changes.forEach(change => {
-				                                                 let thisItem = _TEGM._marqueeContents.filter((thisElement) => { return thisElement.id === change.target.getAttribute('data-marqueeid'); })[0];
+		_TEGM._scrollObserver =
+			new IntersectionObserver(changes => {
+				                         // element states: new and never visible, entered, exiting, exited
+				                         changes.forEach(change => {
+					                         let thisItem = _TEGM._marqueeContents.filter((thisElement) => { return thisElement.id === change.target.getAttribute('data-marqueeid'); })[0];
 
-				                                                 // if it's leaving the view
-				                                                 if (thisItem.lastRatio > change.intersectionRatio) {
+					                         // not yet seen, ignore it
+					                         if (!change.isIntersecting && !thisItem.seen) { return; }
 
-					                                                 // if it's invisible
-					                                                 if (change.intersectionRatio === 0) {
-						                                                 /* remove what is now a useless duplicate
-						                                                  *
-						                                                  * This looks like a memory leak.
-						                                                  */
-						                                                 _TEGM._scrollObserver.unobserve(thisItem.element);
-						                                                 _TEGM._marqueeContents = _TEGM._marqueeContents.filter((thisElement) => { return thisElement.id !== change.target.getAttribute('data-marqueeid'); });
-						                                                 thisItem.remove();
+					                         /* on first seen, set that and return
+					                          * It's not "seen" until the intersection ratio is greater than 20%.
+					                          */
+					                         if (!thisItem.seen &&
+					                             change.intersectionRatio >= .2)
+					                         {
+						                         thisItem.seen = true;
+						                         thisItem.lastRatio = change.intersectionRatio;
+						                         return;
+					                         }
 
-					                                                 } else {
-						                                                 // otherwise, duplicate the target to prevent blanks in the scroll
-						                                                 let newItem = new TEGMElement(change.target.cloneNode(true), _TEGM._options.direction);
-						                                                 _TEGM._marqueeContainer.append(newItem.element);
-						                                                 _TEGM._marqueeContents.push(newItem);
-						                                                 _TEGM.setStart(newItem);
-						                                                 _TEGM._scrollObserver.observe(newItem.element);
+					                         // if it's leaving or left the view
+					                         if (thisItem.seen &&
+					                             change.intersectionRatio < thisItem.lastRatio)
+					                         {
 
-						                                                 // if the marquee is running, scroll this item
-						                                                 if (_TEGM._isRunning) {
-							                                                 newItem.ontransitionend = () => { TEGMarquee.scrollItem(_TEGM, newItem); };
-							                                                 TEGMarquee.scrollItem(_TEGM, newItem);
-						                                                 }
+						                         // if it's completely invisible
+						                         if (!change.isIntersecting) {
 
-					                                                 } // end if invisible
+							                         // if it's not been duped then duplicate it and drop it at the end
+							                         if (!thisItem.duped) {
+								                         // duplicate the target to prevent blanks in the scroll
+								                         let newItem = new TEGMElement(thisItem.element.cloneNode(true), _TEGM._options.direction);
+								                         thisItem.duped = true;
 
-				                                                 } else {
-					                                                 // otherwise, save visibility for next time
-					                                                 thisItem.lastRatio = change.intersectionRatio;
-				                                                 } // end if item is leaving the view
-			                                                 }); // end loop through changes
-		                                                 },
-		                                                 {root : _TEGM._marqueeContainer, threshold : [0, .4]}); // end itemObserver
+								                         _TEGM._marqueeContents.push(newItem);
+								                         _TEGM._marqueeContainer.append(newItem.element);
+								                         _TEGM._scrollObserver.observe(newItem.element);
+								                         _TEGM.setStart(newItem);
+
+								                         // if the marquee is running, scroll this item
+								                         if (_TEGM._isRunning) {
+									                         newItem.ontransitionend = () => { TEGMarquee.scrollItem(_TEGM, newItem); };
+									                         TEGMarquee.scrollItem(_TEGM, newItem);
+								                         } // end if scroll is running
+							                         } // end if item hasn't already been duplicated
+
+							                         // remove what is now a useless duplicate
+							                         _TEGM._marqueeContents = _TEGM._marqueeContents.filter((thisElement) => { return thisElement.id !== thisItem.id; });
+							                         _TEGM._scrollObserver.unobserve(thisItem.element);
+							                         thisItem.remove();
+						                         } // end if invisible
+
+					                         } else {
+						                         // otherwise, save intersection ratio for next time
+						                         thisItem.lastRatio = change.intersectionRatio;
+					                         } // end if item is leaving the view
+				                         }); // end loop through changes
+			                         },
+			                         {root : _TEGM._marqueeContainer, threshold : [0, .2]}); // end itemObserver
 
 		/**
 		 * keep track of whether the marquee is scrolling
@@ -173,7 +191,7 @@ class TEGMarquee {
 		 */
 		_TEGM._lastItem;
 
-		/* Get shortest distance to scroll to make scrolling uniform
+		/* Get the largest distance to scroll to make scrolling uniform
 		 * for items with variable size. Collect scrolling elements
 		 * as an array of TEGMElements.
 		 */
@@ -186,6 +204,10 @@ class TEGMarquee {
 		for (let index = 0; index < children.length; index++) {
 			let thisItem     = new TEGMElement(children[index], _TEGM._options.direction),
 			    thisDistance = _TEGM.isVertical() ? thisItem.offsetHeight : thisItem.offsetWidth;
+
+			// while setting these up, set all to seen and intersecting
+			thisItem.seen = true;
+			thisItem.lastRatio = 1;
 
 			// collect the maximum distance
 			_TEGM._scrollDistance = Math.max(_TEGM._scrollDistance, thisDistance);
@@ -201,6 +223,10 @@ class TEGMarquee {
 				// other items are based on previous item in scroll order
 				_TEGM.setStart(thisItem);
 			}
+
+			// the last item will be outside the list
+			_TEGM.lastItem.seen = false;
+			_TEGM.lastItem.lastRatio = 0;
 
 			// add to observer
 			_TEGM._scrollObserver.observe(thisItem.element);
@@ -325,7 +351,7 @@ class TEGMarquee {
 	}
 
 	/**
-	 * Begin the scrolling processes of this instance.
+	 * Begin the scrolling processes of this instance.`
 	 */
 	doScroll() {
 		let marqueeObject = this;
@@ -336,7 +362,11 @@ class TEGMarquee {
 			marqueeObject._marqueeContainer.onmouseenter = () => { TEGMarquee.stop(marqueeObject); };
 			marqueeObject._marqueeContainer.onmouseleave = () => { TEGMarquee.start(marqueeObject); };
 		}
-		TEGMarquee.start(marqueeObject);
+
+		// don't start unless visible
+		if (marqueeObject.marqueeContainer.style.visible) {
+			TEGMarquee.start(marqueeObject);
+		}
 	} // end doScroll()
 
 	/**
@@ -465,8 +495,18 @@ class TEGMElement {
 			              'color: yellow;');
 		}
 
-		// set an identifier separate from any id attribute set by the initial HTML
+		/**
+		 * Set an identifier separate from any id attribute set by the initial HTML so
+		 * the observer can match the change.target to this item.
+		 */
+
 		_TEGME._element.setAttribute('data-marqueeid', parseInt(Date.now() / Math.random()));
+
+		/** allow only a single duplicate at any time
+		 * @type {Boolean}
+		 * @private
+		 */
+		_TEGME._duped = false;
 
 		/**
 		 * the direction of scroll, must be one of TEGMarquee.DIRECTIONS
@@ -484,12 +524,20 @@ class TEGMElement {
 		}
 
 		/**
-		 * the value of IntersectionObserverEntry.intersectionRatio from
-		 * the last call to the IntersectionObserver for this item
+		 * The value of IntersectionObserverEntry.intersectionRatio from
+		 * the last call to the IntersectionObserver for this item. New
+		 * TEGElements should start out of view.
 		 * @type {IntersectionObserverEntryInit.intersectionRatio}
 		 * @private
 		 */
 		_TEGME._lastRatio = 0;
+
+		/**
+		 * has this item been seen, ever intersected the view?
+		 * @type {boolean}
+		 * @private
+		 */
+		_TEGME._seen = false;
 	}
 
 	/**
@@ -498,22 +546,61 @@ class TEGMElement {
 	get element() { return this._element; }
 
 	/**
-	 * the direction of scroll, see TEGMarquee.D_* values
-	 * @returns {string}
+	 * has this item been duplicated?
+	 * @param {Boolean} isDuped, true if the item has been duplicated
+	 *
+	 * codded odd to filter bad values
 	 */
-	get direction() { return this._direction; }
+
+	set duped(isDuped) { // noinspection RedundantConditionalExpressionJS
+		this._duped = isDuped ? true : false;
+		// debugging
+		this.element.setAttribute('data-mqdbgDuped', isDuped);
+	} //this._element.setAttribute('data-marqueeduped', isDuped ? 'true' : 'false'); }
+
+	get duped() { return this._duped; } //return this._element.getAttribute('data-marqueeduped') === 'true'; }
+
+	/**
+	 * has been seen? Once set cannot be unset.
+	 *
+	 * @param {Boolean} hasBeenSeen, if it's ever been seen
+	 *
+	 * codded odd to filter bad values
+	 */
+
+	set seen(hasBeenSeen) {  // noinspection RedundantConditionalExpressionJS
+		this._seen = hasBeenSeen ? true : false;
+		// debugging
+		this.element.setAttribute('data-mqdbgSeen', hasBeenSeen);
+	} // this._element.setAttribute('data-marqueeseen', beenSeen ? 'true' : 'false'); }
+
+	get seen() { return this._seen; } // this._element.getAttribute('data-marqueeseen'); }
+
+	/**
+	 * @returns {IntersectionObserverEntryInit.intersectionRatio}
+	 */
+	get lastRatio() { return this._lastRatio; }
+
+	/**
+	 * @param {number} intersectionRatio, should be the previous value of IntersectionObserverEntry.intersectionRatio
+	 */
+	set lastRatio(intersectionRatio) {
+		this._lastRatio = intersectionRatio;
+		// debugging
+		this.element.setAttribute('data-mqdbgLastRatio', intersectionRatio);
+	}
 
 	// add shortcuts to HTMLElement properties
 
 	/**
 	 * @returns {number} height of HTMLElement in pixels
 	 */
-	get offsetHeight() { return this._element.offsetHeight; }
+	get offsetHeight() { return this._element.offsetHeight || 0; }
 
 	/**
 	 * @returns {number} width of HTMLElement in pixels
 	 */
-	get offsetWidth() { return this._element.offsetWidth; }
+	get offsetWidth() { return this._element.offsetWidth || 0; }
 
 	get id() { return this._element.getAttribute('data-marqueeid'); }
 
@@ -539,16 +626,6 @@ class TEGMElement {
 	set style(CSSString) { this._element.style = CSSString; }
 
 	/**
-	 * @returns {IntersectionObserverEntryInit.intersectionRatio}
-	 */
-	get lastRatio() { return this._lastRatio; }
-
-	/**
-	 * @param {number} intersectionRatio, should be the previous value of IntersectionObserverEntry.intersectionRatio
-	 */
-	set lastRatio(intersectionRatio) { this._lastRatio = intersectionRatio; }
-
-	/**
 	 * @returns {number} the current position of the item within
 	 * the visible area as defined by the scrolling direction
 	 */
@@ -559,16 +636,26 @@ class TEGMElement {
 				return this._element.offsetTop;
 
 			case TEGMarquee.D_DOWN:
-				// the position is the distance from the bottom of the item to the bottom of the view
-				return this._element.offsetParent.offsetHeight - (this._element.offsetTop + this._element.offsetHeight);
+
+				if (this._element.offsetParent === null) {
+					return 0;
+				} else {
+					// the position is the distance from the bottom of the item to the bottom of the view
+					return this._element.offsetParent.offsetHeight - (this._element.offsetTop + this._element.offsetHeight);
+				}
 
 			case TEGMarquee.D_LEFT:
 				// the position is the left
 				return this._element.offsetLeft;
 
 			case TEGMarquee.D_RIGHT:
-				// the position is the distance from the right of the item to the right of the view
-				return this._element.offsetParent.offsetWidth - (this._element.offsetLeft + this._element.offsetWidth);
+
+				if (this._element.offsetParent === null) {
+					return 0;
+				} else {
+					// the position is the distance from the right of the item to the right of the view
+					return this._element.offsetParent.offsetWidth - (this._element.offsetLeft + this._element.offsetWidth);
+				}
 
 			default:
 				return 0;

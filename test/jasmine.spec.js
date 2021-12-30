@@ -18,11 +18,17 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			                                 });
 			TEGMLeft.doScroll();
 			window.TEGMRight = new TEGMarquee({
-				                                  marqueeSelector : 'ul.marqueeRight',
+				                                  marqueeSelector : 'ul.marqueeRight.invisible',
 				                                  direction       : TEGMarquee.D_RIGHT,
 				                                  duration        : 8,
 			                                  });
 			TEGMRight.doScroll();
+			window.TEGMRightVisible = new TEGMarquee({
+				                                  marqueeSelector : 'ul.marqueeRight.visible',
+				                                  direction       : TEGMarquee.D_RIGHT,
+				                                  duration        : 8,
+			                                  });
+			TEGMRightVisible.doScroll();
 
 			try {
 				window.TEGMNone = new TEGMarquee({
@@ -51,13 +57,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			expect(TEGMRight.direction).toBe(TEGMarquee.D_RIGHT);
 		}); // it('should create marquee objects')
 
-		it('should handle a missing marquee', function() {
-			expect(typeof TEGMNone).toBe('undefined');
-		}); // end it('should handle a missing marquee')
+		it('should handle a missing marquee', () => { expect(typeof TEGMNone).toBe('undefined'); }); // end it('should handle a missing marquee')
 
-		it('should handle an empty marquee', function() {
-			expect(typeof TEGMNone).toBe('undefined');
-		}); // end it('should handle an empty marquee')
+		it('should handle an empty marquee', () => { expect(typeof TEGMNone).toBe('undefined'); }); // end it('should handle an empty marquee')
 
 		it('should stop when the mouse hovers over it', function() {
 			TEGMDown.marqueeContainer.onmouseenter();
@@ -70,9 +72,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 			expect(TEGMUp.isRunning).toBeTrue();
 		}); // end it('should start when the mouse moves away')
 
-		it('should stop when the marquee is out of view', function() {
-			expect(TEGMRight.isRunning).toBeFalse();
-		}); // end it('should stop when the marquee is out of view')
+		it('should stop when the marquee is out of view', () => { expect(TEGMRight.isRunning).toBeFalse(); }); // end it('should stop when the marquee is out of view')
 
 		it('should pause when told', function() {
 			TEGMLeft.play();
