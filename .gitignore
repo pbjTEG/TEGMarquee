@@ -16,13 +16,16 @@ dist
 *.svg
 *.ttf
 *.woff
-*test.*
 *bak.*
 *.working*
 *.min.*
+*_min.*
 *.tmp
 *.tmp.*
-
+*.patch
+*.difff
+package-lock.json
+node_modules
 
 ### VisualStudioCode template
 .vscode/*

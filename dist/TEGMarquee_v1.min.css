@@ -1,0 +1,16 @@
+/*
+* TEG Marquee
+*
+* Fancy sliding content in any of four directions.
+*
+* Author: Paul B. Joiner <paulj@engageyourcause.com>
+* Copyright (c) 2022 PMG: The Engage Group
+* License: MIT
+*
+* Release:
+*   Version: v1
+*   Branch:  master
+*   Git Tag: v1
+*   Date:    20221021
+*/
+.marqueeContainer{height:10rem;overflow:hidden;position:relative;width:10rem}.marqueeContainer>*{display:inline-block;padding:.3rem;position:absolute}.marqueeContainer.marqueeLeft,.marqueeContainer.marqueeRight{height:1.8rem;white-space:nowrap}
